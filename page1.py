@@ -9,6 +9,7 @@ def create_time_series(data, title):
 
     for column in data.columns:
         fig.add_trace(go.Scatter(
+            x=np.arange(len(data)),  # Fix: Added x-values
             y=data[column],
             name=column,
             mode='lines',
@@ -56,13 +57,13 @@ def create_distribution_plot(data, title):
 def create_correlation_heatmap(corr_matrix):
     """Create a correlation heatmap"""
     fig = go.Figure(data=go.Heatmap(
-        z=corr_matrix,
-        x=corr_matrix.columns,
-        y=corr_matrix.columns,
+        z=corr_matrix.values,  # Fix: Use .values for correct matrix input
+        x=corr_matrix.columns.to_list(),  # Fix: Ensure labels are lists
+        y=corr_matrix.columns.to_list(),
         colorscale='RdBu',
         zmin=-1,
         zmax=1,
-        text=np.round(corr_matrix, 2),
+        text=np.round(corr_matrix.values, 2),  # Fix: Apply .values
         texttemplate='%{text}',
         textfont={"size": 10},
         hoverongaps=False
@@ -80,13 +81,13 @@ def create_comparison_plot(data1, data2, label1, label2):
     fig = go.Figure()
 
     fig.add_trace(go.Box(
-        y=data1,
+        y=np.array(data1).flatten(),  # Fix: Ensure correct array input
         name=label1,
         boxpoints='outliers'
     ))
 
     fig.add_trace(go.Box(
-        y=data2,
+        y=np.array(data2).flatten(),  # Fix: Ensure correct array input
         name=label2,
         boxpoints='outliers'
     ))
